@@ -12,5 +12,5 @@ jobs:
         with:
           distribution: "adopt"
           java-version: 14
-      - name: clean build
-        run: ./gradlew clean build -x jar --info -stacktrace
+      - name: clean test
+        run: ./gradlew clean test --info -stacktrace
