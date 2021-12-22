@@ -14,6 +14,8 @@ public class SurveyManipulationRequest {
         this.limitDate = limitDate;
     }
 
+    public SurveyManipulationRequest() {}
+
     public String getTitle() {
         return title;
     }
