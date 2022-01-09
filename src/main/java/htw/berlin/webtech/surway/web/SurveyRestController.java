@@ -4,17 +4,19 @@ import htw.berlin.webtech.surway.service.SurveyService;
 import htw.berlin.webtech.surway.web.api.Survey;
 import htw.berlin.webtech.surway.web.api.SurveyManipulationRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
+@Validated
 public class SurveyRestController {
 
     private final SurveyService surveyService;
-
 
     public SurveyRestController(SurveyService surveyService) {
         this.surveyService = surveyService;
@@ -32,10 +34,13 @@ public class SurveyRestController {
     }
 
     @PostMapping(path = "/api/v1/survey")
-    public ResponseEntity<Void> createSurvey(@RequestBody SurveyManipulationRequest request) throws URISyntaxException {
+    public ResponseEntity<Void> createSurvey(@Valid @RequestBody SurveyManipulationRequest request) throws URISyntaxException {
         var survey = surveyService.create(request);
         URI uri = new URI("/api/v1/surveys/" + survey.getId());
-        return ResponseEntity.created(uri).build();
+        return ResponseEntity
+                .created(uri)
+                .header("Access-Control-Expose-Headers", "Location")
+                .build();
     }
 
     @PutMapping(path = "/api/v1/surveys/{id}")

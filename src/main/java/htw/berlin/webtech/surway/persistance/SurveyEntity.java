@@ -1,6 +1,8 @@
 package htw.berlin.webtech.surway.persistance;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "surveys")
 public class SurveyEntity {
@@ -20,9 +22,13 @@ public class SurveyEntity {
     private Boolean limited;
 
     @Column(name = "limitDate")
-    private String limitDate;
+    @Enumerated(value = EnumType.STRING)
+    private Limit limitDate;
 
-    public SurveyEntity(String title, String description, Boolean limited, String limitDate) {
+    @OneToMany(mappedBy = "surveyId", fetch = FetchType.EAGER)
+    private List<SectionEntity> sections = new ArrayList<>();
+
+    public SurveyEntity(String title, String description, Boolean limited, Limit limitDate) {
         this.title = title;
         this.description = description;
         this.limited = limited;
@@ -59,11 +65,19 @@ public class SurveyEntity {
         this.limited = limited;
     }
 
-    public String getLimitDate() {
+    public Limit getLimitDate() {
         return limitDate;
     }
 
-    public void setLimitDate(String limitDate) {
+    public void setLimitDate(Limit limitDate) {
         this.limitDate = limitDate;
+    }
+
+    public List<SectionEntity> getSections() {
+        return sections;
+    }
+
+    public void setSections(List<SectionEntity> sections) {
+        this.sections = sections;
     }
 }

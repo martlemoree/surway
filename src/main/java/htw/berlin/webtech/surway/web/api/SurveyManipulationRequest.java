@@ -1,18 +1,23 @@
 package htw.berlin.webtech.surway.web.api;
 
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 public class SurveyManipulationRequest {
 
-    private String title;
-    private String description;
-    private boolean limited;
-    private String limitDate;
+    @Size(min = 3, message = "Please provide a title with at least 3 characters or more.")
 
-    public SurveyManipulationRequest(String title, String description, boolean limited, String limitDate) {
-        this.title = title;
-        this.description = description;
-        this.limited = limited;
-        this.limitDate = limitDate;
-    }
+    private String title;
+
+    private String description;
+
+    private boolean limited;
+
+    @Pattern(
+            regexp = "one|seven|thirty|onehundredandeighty|threehundredandsixty",
+            message = "Please provide a limit as 1 day, 7, 30, 180 or 360 days."
+    )
+    private String limitDate;
 
     public SurveyManipulationRequest() {}
 

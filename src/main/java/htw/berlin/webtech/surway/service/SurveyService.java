@@ -1,5 +1,6 @@
 package htw.berlin.webtech.surway.service;
 
+import htw.berlin.webtech.surway.persistance.Limit;
 import htw.berlin.webtech.surway.persistance.SurveyEntity;
 import htw.berlin.webtech.surway.persistance.SurveyRepository;
 import htw.berlin.webtech.surway.web.api.Survey;
@@ -13,31 +14,30 @@ import java.util.stream.Collectors;
 public class SurveyService {
 
     private final SurveyRepository surveyRepository;
+    private final SurveyTransformer surveyTransformer;
 
-    public SurveyService(SurveyRepository surveyRepository) {
-
+    public SurveyService(SurveyRepository surveyRepository, SurveyTransformer surveyTransformer) {
         this.surveyRepository = surveyRepository;
-
+        this.surveyTransformer = surveyTransformer;
     }
 
     public List<Survey> findAll() {
-
         List<SurveyEntity> surveys = surveyRepository.findAll();
         return surveys.stream()
-                .map(this::transformEntity)
+                .map(surveyTransformer::transformEntity)
                 .collect(Collectors.toList());
-
     }
 
     public Survey findById(Long id) {
         var surveyEntity = surveyRepository.findById(id);
-        return surveyEntity.map(this::transformEntity).orElse(null);
+        return surveyEntity.map(surveyTransformer::transformEntity).orElse(null);
     }
 
     public Survey create(SurveyManipulationRequest request) {
-        var surveyEntity = new SurveyEntity(request.getTitle(), request.getDescription(), request.isLimited(), request.getLimitDate());
+        var limitDate = Limit.valueOf(request.getLimitDate());
+        var surveyEntity = new SurveyEntity(request.getTitle(), request.getDescription(), request.isLimited(), limitDate);
         surveyEntity = surveyRepository.save(surveyEntity);
-        return transformEntity(surveyEntity);
+        return surveyTransformer.transformEntity(surveyEntity);
     }
 
     public Survey update(Long id, SurveyManipulationRequest request) {
@@ -50,10 +50,10 @@ public class SurveyService {
         surveyEntity.setTitle(request.getTitle());
         surveyEntity.setDescription(request.getDescription());
         surveyEntity.setLimited(request.isLimited());
-        surveyEntity.setLimitDate(request.getLimitDate());
+        surveyEntity.setLimitDate(Limit.valueOf(request.getLimitDate()));
         surveyEntity = surveyRepository.save(surveyEntity);
 
-        return transformEntity(surveyEntity);
+        return surveyTransformer.transformEntity(surveyEntity);
     }
 
     public boolean deleteById(Long id) {
@@ -65,15 +65,4 @@ public class SurveyService {
         return true;
 
     }
-
-    private Survey transformEntity(SurveyEntity surveyEntity) {
-        return new Survey(
-                surveyEntity.getId(),
-                surveyEntity.getTitle(),
-                surveyEntity.getDescription(),
-                surveyEntity.getLimited(),
-                surveyEntity.getLimitDate()
-        );
-    }
-
 }
