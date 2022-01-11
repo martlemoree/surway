@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -56,6 +57,18 @@ class SurveyRestControllerTest {
                 .andExpect(jsonPath("$[1].description").value("just another mocked survey for testing"))
                 .andExpect(jsonPath("$[1].limited").value(true))
                 .andExpect(jsonPath("$[1].limitDate").value("seven"));
+    }
+
+    @Test
+    @DisplayName("should return 404 if survey isnt found")
+    void should_return_404_if_survey_isnt_found() throws Exception {
+        // given
+        doReturn(null).when(surveyService).findById(anyLong());
+
+        // when
+        mockMvc.perform(get("/api/v1/surveys/123"))
+                // then
+                .andExpect(status().isNotFound());
     }
 
     @Test
