@@ -63,6 +63,5 @@ public class SurveyService {
 
         surveyRepository.deleteById(id);
         return true;
-
     }
 }
