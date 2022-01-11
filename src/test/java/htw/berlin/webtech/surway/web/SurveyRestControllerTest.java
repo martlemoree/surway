@@ -43,7 +43,7 @@ class SurveyRestControllerTest {
         doReturn(surveys).when(surveyService).findAll();
 
         // when
-        mockMvc.perform(get("/api/v1/persons"))
+        mockMvc.perform(get("/api/v1/surveys"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(2))
